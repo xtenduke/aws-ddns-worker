@@ -9,3 +9,8 @@ DOMAINS_CSV: domains you want to set / update: e.g. example.com,www.example.com
 DELAY_SECONDS: how often this should run in seconds (defaults to 3600 noisy)
 HOSTED_ZONE_ID: the id of the aws hosted zone
 ```
+
+Run:
+```
+$ docker run ghcr.io/xtenduke/aws-ddns-worker:latest
+```
