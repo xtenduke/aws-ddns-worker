@@ -15,8 +15,23 @@ Run:
 $ docker run ghcr.io/xtenduke/aws-ddns-worker:latest
 ```
 
+With docker compose / podman-compose:
+```
+services:
+  app:
+    image: ghcr.io/xtenduke/aws-ddns-worker:latest
+    container_name: aws-ddns-worker
+    restart: always
+    environment:
+     - ACCESS_KEY_ID=your-access-key-id
+     - SECRET_ACCESS_KEY=your-secret-key-id
+     - DOMAINS_CSV=your-domains
+     - DELAY_SECONDS=3600
+     - HOSTED_ZONE_ID=hosted-zone-id
+```
 
-IAM Policy
+
+IAM Policy:
 ```
 {
     "Version": "2012-10-17",
