@@ -50,7 +50,6 @@ const getEnv = (): Env => {
 export const run = async () => {
   var env = getEnv()
 
-
   log(`Beginning update`);
   const client = new Route53Client({
     region: "ap-southeast-2",
@@ -90,7 +89,7 @@ export const run = async () => {
   }
 
   const command = new ChangeResourceRecordSetsCommand(upsert);
-  client.send(command);
+  await client.send(command);
   const nextRunTime = new Date(Date.now() + env.delay).toISOString();
   log(`next run at: ${nextRunTime}`);
 
@@ -103,6 +102,5 @@ export const run = async () => {
     }
   }, env.delay) 
 }
-
 
 run().then(() => {})
