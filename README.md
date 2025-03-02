@@ -8,6 +8,7 @@ SECRET_ACCESS_KEY: secret access key
 DOMAINS_CSV: domains you want to set / update: e.g. example.com,www.example.com
 DELAY_SECONDS: how often this should run in seconds (defaults to 3600 noisy)
 HOSTED_ZONE_ID: the id of the aws hosted zone
+REGION: aws region
 ```
 
 Run:
@@ -28,6 +29,7 @@ services:
      - DOMAINS_CSV=your-domains
      - DELAY_SECONDS=3600
      - HOSTED_ZONE_ID=hosted-zone-id
+     - REGION=aws-region
 ```
 
 
@@ -41,14 +43,10 @@ IAM Policy:
             "Effect": "Allow",
             "Action": [
                 "route53:GetHostedZone",
-                "route53:ChangeResourceRecordSets"
+                "route53:ChangeResourceRecordSets",
+                "route53:ListResourceRecordSets",
+                "route53:GetChange"
             ],
-            "Resource": "arn:aws:route53:::hostedzone/<your-zone-id>"
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": "route53:GetChange",
             "Resource": "arn:aws:route53:::hostedzone/<your-zone-id>"
         }
     ]
