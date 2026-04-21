@@ -1,4 +1,4 @@
-FROM node:23 AS install
+FROM node:24 AS install
 WORKDIR /app
 
 COPY ["package.json", "yarn.lock", "./"]
@@ -7,7 +7,7 @@ RUN yarn install
 RUN yarn build
 
 ENV NODE_ENV=production
-FROM node:23-alpine as run
+FROM node:24-alpine as run
 WORKDIR /app
 
 COPY --from=install ./app/dist ./dist

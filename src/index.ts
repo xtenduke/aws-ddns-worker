@@ -1,5 +1,5 @@
 import { Route53Client, ChangeResourceRecordSetsCommandInput, ChangeResourceRecordSetsCommand, Change, ListResourceRecordSetsCommand, ListResourceRecordSetsRequest } from "@aws-sdk/client-route-53";
-import { publicIpv4 } from "public-ip"
+
 
 const DEFAULT_DELAY = 3600
 
@@ -16,7 +16,7 @@ type Env = {
   region: string
 }
 
-class AwsDdnsWorker {
+export class AwsDdnsWorker {
   private env: Env;
   private client: Route53Client;
 
@@ -75,12 +75,12 @@ class AwsDdnsWorker {
     
     const response = await this.client.send(new ListResourceRecordSetsCommand(input));
     
-    const matchingRecords = (response.ResourceRecordSets ?? []).flatMap((record) => {
+    const matchingRecords = (response.ResourceRecordSets ?? []).flatMap((record: any) => {
       if (!record.Name) return [];
       // AWS have some sort of encoding when pulling domains from SDK
       const domain = record.Name.replace(/\\052/g, '*').replace(/\.$/, '').trim();
       if (!domains.has(domain)) return [];    
-      return [{ domain, ips: record.ResourceRecords?.map((x) => x.Value) ?? [] }];
+      return [{ domain, ips: record.ResourceRecords?.map((x: any) => x.Value) ?? [] }];
     });
     
     log(`Found ${matchingRecords.length} matching records, expecting ${domains.size}`);
@@ -88,7 +88,7 @@ class AwsDdnsWorker {
       return true;
     }
     
-    const recordsWithWrongIp = matchingRecords.filter(({ ips }) => {
+    const recordsWithWrongIp = matchingRecords.filter(({ ips }: { ips: any[] }) => {
       return ips.length === 0 || !ips.includes(ip);
     });
     
@@ -131,6 +131,7 @@ class AwsDdnsWorker {
   }
 
   public async run() {
+    const { publicIpv4 } = await import("public-ip");
     const ip = await publicIpv4();
 
     const changesRequired = await this.areChangesRequired(this.env.domainsCsv, ip);
@@ -155,5 +156,7 @@ class AwsDdnsWorker {
   }
 }
 
-const worker = new AwsDdnsWorker();
-worker.run().then(() => { })
+if (require.main === module) {
+  const worker = new AwsDdnsWorker();
+  worker.run().then(() => { })
+}
